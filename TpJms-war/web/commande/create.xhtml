@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>PrimeFaces</title>
+            </f:facet>
+        </h:head>
+
+        <h:body>
+
+            <p:layout fullPage="true">
+
+                <p:layoutUnit position="north" size="100" resizable="true" closable="true" collapsible="true">
+                    Header
+                </p:layoutUnit>
+
+                <p:layoutUnit position="south" size="100" closable="true" collapsible="true">
+                    Footer
+                </p:layoutUnit>
+
+                <ui:include src="/menu.xhtml"></ui:include>
+
+                <p:layoutUnit position="center">
+                    <h:form id="form">
+                        <p:panel id="panel" header="Choisissez votre album">
+                            <p:messages id="msgs" showDetail="true" />
+                            <p:dataTable id="details" var="detail" value="#{commandeManagedBean.commande.details}" rendered="#{commandeManagedBean.size > 0}">  
+                                <p:column headerText="Album">  
+                                    <h:outputText value="#{detail.album.nom}" />  
+                                </p:column>  
+
+                                <p:column headerText="Quantité">  
+                                    <h:outputText value="#{detail.quantite}" />  
+                                </p:column>  
+
+                                <p:column headerText="Montant">  
+                                    <h:outputText value="#{detail.quantite*detail.album.prix}" />  
+                                </p:column>  
+                            </p:dataTable> 
+                            <p:separator  />
+                          
+                            <h:panelGrid columns="2" cellpadding="5" id="form_commande" rendered="#{commandeManagedBean.commande.id == null}">
+                                <h:outputLabel for="album" value="Choisir un album:" style="font-weight:bold"/> 
+                                <p:selectOneMenu id="album" value="#{commandeManagedBean.album}" >  
+                                    <f:selectItem itemLabel="Select Album" itemValue="" />  
+                                    <f:selectItems value="#{commandeManagedBean.albums()}" var="alb" itemLabel="#{alb.nom}" itemValue="#{alb.id}" />  
+                                </p:selectOneMenu> 
+                                <h:outputLabel for="quantite" value="Quantité:" style="font-weight:bold"/> 
+                                <p:inputText id="quantite" value="#{commandeManagedBean.quantite}"/>
+                                <p:commandButton value="Ajouter au Panier" update="panel" actionListener="#{commandeManagedBean.addToBasket}" id="btnSubmit"/>  
+                                <p:commandButton value="Terminer" onclick="dlg3.show()" id="terminer_commande"/>  
+                            </h:panelGrid>
+                        </p:panel>
+                        <p:dialog header="Informations Livraison" widgetVar="dlg3" showEffect="explode" hideEffect="bounce">  
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputLabel for="client_nom" value="Nom" style="font-weight:bold"/> 
+                                <p:inputText id="client_nom" value="#{commandeManagedBean.client_nom}"/>
+                                <h:outputLabel for="client_prenom" value="Prénom" style="font-weight:bold"/> 
+                                <p:inputText id="client_prenom" value="#{commandeManagedBean.client_prenom}"/>
+
+                                <h:outputLabel for="client_adresse" value="Adresse" style="font-weight:bold"/> 
+                                <p:inputText id="client_adresse" value="#{commandeManagedBean.client_adresse}"/>
+
+                                <h:outputLabel for="client_telephone" value="Téléphone" style="font-weight:bold"/> 
+                                <p:inputText id="client_telephone" value="#{commandeManagedBean.client_telephone}"/>
+
+                                <h:outputLabel for="client_email" value="Email" style="font-weight:bold"/> 
+                                <p:inputText id="client_email" value="#{commandeManagedBean.client_email}"/>
+                                <h:outputLabel for="date_livraisonCal" value="Date de Livraison" style="font-weight:bold"/> 
+                                <p:calendar value="#{commandeManagedBean.date_livraison}" id="date_livraisonCal" mindate="#{commandeManagedBean.commande.dateCommande}"  />  
+                                <p:commandButton value="Commander" update="msgs"  actionListener="#{commandeManagedBean.finish_commande}" onclick="this.close()" id="finish_commande" oncomplete="hide()"/>      
+                            </h:panelGrid>
+                        </p:dialog> 
+                        <p:dialog header="Selected Dates" widgetVar="dialog"   
+                                  showEffect="fade" hideEffect="fade">  
+                            <h:panelGrid id="display" columns="2" cellpadding="5">  
+                                <h:outputText value="Popup Date:" />  
+                                <h:outputText value="#{calendarBean.date2}" id="date_livraisonDate">  
+                                    <f:convertDateTime pattern="d/M/yyyy"/>  
+                                </h:outputText>  
+                            </h:panelGrid>  
+                        </p:dialog>  
+                    </h:form>
+                </p:layoutUnit>
+            </p:layout>
+        </h:body>
+    </f:view>
+</html>
+
